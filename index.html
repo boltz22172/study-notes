@@ -2,25 +2,20 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>自动读取资料</title>
+  <title>自动读取学习资料</title>
 </head>
 <body>
-  <h1>自动生成文件列表</h1>
+  <h1>我的学习资料</h1>
   <ul id="file-list"></ul>
 
   <script>
-    const username = "boltz22172";
-    const repo = "study-notes";  // ✅ 改成真实仓库名
-    const path = ""; // 根目录
+    const username = "boltz22172"; // 例如 "Tristan-phy"
+    const repo = "study-notes";           // 例如 "study-notes"
+    const path = ""; // 根目录就写空字符串
 
     async function loadFiles() {
       const url = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
       const res = await fetch(url);
-      if (!res.ok) {
-        document.getElementById("file-list").innerHTML =
-          `<li>❌ 无法加载文件列表 (错误 ${res.status})</li>`;
-        return;
-      }
       const files = await res.json();
 
       const list = document.getElementById("file-list");
@@ -28,7 +23,7 @@
         if (file.type === "file") {
           const li = document.createElement("li");
           const a = document.createElement("a");
-          a.href = file.html_url;   // 用 GitHub 自带的渲染页面
+          a.href = file.html_url; // 用 GitHub 自带的 md 渲染
           a.textContent = file.name;
           li.appendChild(a);
           list.appendChild(li);
@@ -40,5 +35,6 @@
   </script>
 </body>
 </html>
+
 
 
