@@ -2,16 +2,25 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>自动读取资料</title>
+  <title>学习资料站</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; max-width: 800px; }
+    #file-list li { margin: 5px 0; }
+    #content { border-top: 1px solid #ddd; margin-top: 20px; padding-top: 20px; }
+  </style>
+  <!-- 引入 marked.js (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <h1>自动生成文件列表</h1>
+  <h1>我的学习资料</h1>
   <ul id="file-list"></ul>
+
+  <div id="content"><em>← 点击左边的文档标题来阅读</em></div>
 
   <script>
     const username = "boltz22172";
     const repo = "study-notes";
-    const path = ""; // 想读取的目录
+    const path = ""; // 根目录
 
     async function loadFiles() {
       const url = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
@@ -20,11 +29,17 @@
 
       const list = document.getElementById("file-list");
       files.forEach(file => {
-        if (file.type === "file") {
+        if (file.type === "file" && file.name.endsWith(".md")) {
           const li = document.createElement("li");
           const a = document.createElement("a");
-          a.href = file.download_url;
+          a.href = "#";
           a.textContent = file.name;
+          a.onclick = async (e) => {
+            e.preventDefault();
+            const raw = await fetch(file.download_url);
+            const text = await raw.text();
+            document.getElementById("content").innerHTML = marked.parse(text);
+          };
           li.appendChild(a);
           list.appendChild(li);
         }
@@ -35,3 +50,4 @@
   </script>
 </body>
 </html>
+
